@@ -38,7 +38,9 @@ class MinimalPublisher(Node):
         )
         self.fake_publisher = self.create_publisher(LaserScan, self.get_parameter("topic").value, 10)
         timer_period = 1.0/self.get_parameter("pub_freq").value
+        self.range_pub = self.create_publisher(Float32, "range_test", 10)
         self.timer = self.create_timer(timer_period, self.timer_callback)
+
         # self.i =0
     
     def timer_callback(self):
@@ -58,6 +60,11 @@ class MinimalPublisher(Node):
             )
         ]
         self.fake_publisher.publish(msg)
+
+        length = Float32()
+        length.data = float(len(msg.ranges))
+        self.range_pub.publish(length)
+        self.get_logger().info('Publishing: "%s"' % length.data)
         
     # def __init__(self):
     #     super().__init__('minimal_publisher')

@@ -43,9 +43,11 @@ class MinimalPublisher(Node):
         # self.dist.publish(dist)
 
         # angle = Float32()
-        msg.angle = scan.ranges.index(dist.data)*scan.angle_increment+scan.angle_min
+        msg.angle = scan.ranges.index(msg.distance)*scan.angle_increment+scan.angle_min
         # self.angle.publish(angle)
         self.open.publish(msg)
+
+        self.get_logger().info('Publishing: "%s"' % msg.angle)
     
 def main(args=None):
     rclpy.init(args=args)
