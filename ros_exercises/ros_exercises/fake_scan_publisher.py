@@ -23,7 +23,7 @@ import math
 class MinimalPublisher(Node):
     def __init__(self):
         super().__init__('fake_scan_publisher')
-         self.declare_parameters(
+        self.declare_parameters(
             namespace="",
             parameters=[
                 ("topic", "fake_scan"),
@@ -47,8 +47,8 @@ class MinimalPublisher(Node):
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.angle_min = self.get_parameter("angle_min").value
         msg.angle_max = self.get_parameter("angle_max").value
-        msg.angle_increment = self.get_parameter("angle_increment").value
-        msg.scan_time = 1.0/self.get_parameter("pub_rate").value
+        msg.angle_increment = self.get_parameter("angle_inc").value
+        msg.scan_time = 1.0/self.get_parameter("pub_freq").value
         msg.range_min = self.get_parameter("range_min").value
         msg.range_max = self.get_parameter("range_max").value
         msg.ranges = [
