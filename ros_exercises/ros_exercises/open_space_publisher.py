@@ -19,37 +19,27 @@ from std_msgs.msg import Float32
 import random 
 from sensor_msgs.msg import LaserScan
 import math
+from custom_msgs.msg import OpenSpace
 
 class MinimalPublisher(Node):
     def __init__(self):
         super().__init__('open_space_publisher')
-        self.dist = self.create_publisher(Float32, "open_space/distance", 10)
-        self.angle = self.create_publisher(Float32, "open_space/angle", 10)
+        self.open = self.create_publisher(OpenSpace, "open_space", 10)
+        # self.dist = self.create_publisher(Float32, "open_space/distance", 10)
+        # self.angle = self.create_publisher(Float32, "open_space/angle", 10)
         self.subscription = self.create_subscription(LaserScan, "fake_scan", self.listener_callback, 10)
     
     def listener_callback(self, scan):
-        dist = Float32()
-        dist.data = max(scan.ranges)
-        self.dist.publish(dist)
+        msg = OpenSpace()
+        # dist = Float32()
+        msg.distance = max(scan.ranges)
+        # self.dist.publish(dist)
 
-        angle = Float32()
-        angle.data = scan.ranges.index(dist.data)*scan.angle_increment+scan.angle_min
-        self.angle.publish(angle)
-    # def __init__(self):
-    #     super().__init__('minimal_publisher')
-    #     self.publisher_ = self.create_publisher(String, 'topic', 10)
-    #     timer_period = 0.5  # seconds
-    #     self.timer = self.create_timer(timer_period, self.timer_callback)
-    #     self.i = 0
-
-    # def timer_callback(self):
-    #     msg = String()
-    #     msg.data = 'Hello World: %d' % self.i
-    #     self.publisher_.publish(msg)
-    #     self.get_logger().info('Publishing: "%s"' % msg.data)
-    #     self.i += 1
-
-
+        # angle = Float32()
+        msg.angle = scan.ranges.index(dist.data)*scan.angle_increment+scan.angle_min
+        # self.angle.publish(angle)
+        self.open.publish(msg)
+    
 def main(args=None):
     rclpy.init(args=args)
 
