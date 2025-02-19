@@ -24,10 +24,17 @@ from custom_msgs.msg import OpenSpace
 class MinimalPublisher(Node):
     def __init__(self):
         super().__init__('open_space_publisher')
-        self.open = self.create_publisher(OpenSpace, "open_space", 10)
+        self.declare_parameters(
+            namespace="",
+            parameters=[
+                ("pub_name", "open_space"),
+                ("sub_name", "fake_scan"),
+            ],
+        )
+        self.open = self.create_publisher(OpenSpace, self.get_parameter("pub_name").value, 10)
         # self.dist = self.create_publisher(Float32, "open_space/distance", 10)
         # self.angle = self.create_publisher(Float32, "open_space/angle", 10)
-        self.subscription = self.create_subscription(LaserScan, "fake_scan", self.listener_callback, 10)
+        self.subscription = self.create_subscription(LaserScan, self.get_parameter("sub_name").value, self.listener_callback, 10)
     
     def listener_callback(self, scan):
         msg = OpenSpace()

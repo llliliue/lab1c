@@ -23,8 +23,21 @@ import math
 class MinimalPublisher(Node):
     def __init__(self):
         super().__init__('fake_scan_publisher')
-        self.fake_publisher = self.create_publisher(LaserScan, 'fake_scan', 10)
-        timer_period = 0.05 
+         self.declare_parameters(
+            namespace="",
+            parameters=[
+                ("topic", "fake_scan"),
+                ("pub_freq", 20),
+                ("angle_min", -(2/3) * math.pi),
+                ("angle_max", (2/3) * math.pi),
+                ("angle_inc", math.pi/300),
+                ("range_min", 1.0),
+                ("range_max", 10.0),
+                
+            ],
+        )
+        self.fake_publisher = self.create_publisher(LaserScan, self.get_parameter("topic").value, 10)
+        timer_period = 1.0/self.get_parameter("pub_freq").value
         self.timer = self.create_timer(timer_period, self.timer_callback)
         # self.i =0
     
@@ -32,12 +45,12 @@ class MinimalPublisher(Node):
         msg = LaserScan()
         msg.header.frame_id = "base_link"
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.angle_min = -(2/3) * math.pi
-        msg.angle_max = (2/3)*math.pi
-        msg.angle_increment = math.pi/300
-        msg.scan_time = 0.05
-        msg.range_min = 1.0
-        msg.range_max = 10.0
+        msg.angle_min = self.get_parameter("angle_min").value
+        msg.angle_max = self.get_parameter("angle_max").value
+        msg.angle_increment = self.get_parameter("angle_increment").value
+        msg.scan_time = 1.0/self.get_parameter("pub_rate").value
+        msg.range_min = self.get_parameter("range_min").value
+        msg.range_max = self.get_parameter("range_max").value
         msg.ranges = [
             random.uniform(msg.range_min, msg.range_max)
             for _ in range(
